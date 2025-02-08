@@ -1,9 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trophy, Users, Gamepad, Search, Award, ArrowUp, ArrowDown } from "lucide-react";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [globalNews, setGlobalNews] = useState([]);
+  const [localNews, setLocalNews] = useState([]);
 
   const universities = [
     { name: "University of Nairobi", rank: 1, change: "up", points: 2500 },
@@ -13,38 +15,59 @@ const Index = () => {
   ];
 
   const gameTopPlayers = {
-    lol: [
+    tekken: [
       { name: "John Doe", university: "UoN", rating: 2800 },
       { name: "Jane Smith", university: "Strathmore", rating: 2750 },
       { name: "Mike Johnson", university: "KU", rating: 2700 },
     ],
-    dota2: [
+    fifa: [
       { name: "Alice Brown", university: "JKUAT", rating: 2850 },
       { name: "Bob Wilson", university: "UoN", rating: 2800 },
       { name: "Carol White", university: "Strathmore", rating: 2780 },
     ],
-    csgo: [
+    efootball: [
       { name: "David Lee", university: "KU", rating: 2900 },
       { name: "Emma Davis", university: "UoN", rating: 2850 },
       { name: "Frank Miller", university: "JKUAT", rating: 2820 },
     ],
-    valorant: [
+    pubg: [
       { name: "Grace Kim", university: "Strathmore", rating: 2750 },
       { name: "Henry Park", university: "UoN", rating: 2700 },
       { name: "Ivy Chen", university: "KU", rating: 2680 },
     ],
-    fifa: [
+    codm: [
       { name: "Jack Thompson", university: "JKUAT", rating: 2950 },
       { name: "Kelly Moore", university: "Strathmore", rating: 2900 },
       { name: "Liam Wilson", university: "UoN", rating: 2880 },
     ],
   };
 
-  const news = [
-    { title: "UoN Dominates Regional Tournament", date: "2024-03-10" },
-    { title: "New Esports Arena Opens at Strathmore", date: "2024-03-08" },
-    { title: "KU Team Qualifies for Continental Championship", date: "2024-03-05" },
-  ];
+  // Simulated news fetch function (replace with actual API call)
+  const fetchNews = async () => {
+    // Simulated local news
+    const localNewsData = [
+      { title: "UoN Dominates Regional Tournament", date: "2024-03-10", type: "local" },
+      { title: "New Esports Arena Opens at Strathmore", date: "2024-03-08", type: "local" },
+      { title: "KU Team Qualifies for Continental Championship", date: "2024-03-05", type: "local" },
+    ];
+
+    // Simulated global news
+    const globalNewsData = [
+      { title: "Major Updates Coming to PUBG Mobile", date: "2024-03-10", type: "global" },
+      { title: "FIFA 24 Global Series Announced", date: "2024-03-09", type: "global" },
+      { title: "New Tekken Tournament Circuit Revealed", date: "2024-03-07", type: "global" },
+    ];
+
+    setLocalNews(localNewsData);
+    setGlobalNews(globalNewsData);
+  };
+
+  // Fetch news every 5 minutes
+  useEffect(() => {
+    fetchNews(); // Initial fetch
+    const interval = setInterval(fetchNews, 300000); // Update every 5 minutes
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
@@ -113,7 +136,7 @@ const Index = () => {
             <div className="flex items-center mb-6">
               <Award className="w-6 h-6 text-accent mr-3" />
               <h2 className="text-2xl font-bold text-white capitalize">
-                {game.replace('lol', 'League of Legends').replace('csgo', 'CS:GO')} Top Players
+                {game === "codm" ? "Call of Duty Mobile" : game.toUpperCase()} Top Players
               </h2>
             </div>
             <div className="grid gap-4">
@@ -137,18 +160,37 @@ const Index = () => {
       </div>
 
       {/* News Feed */}
-      <div className="max-w-7xl mx-auto glass-card rounded-xl p-6 animate-fade-up" style={{ animationDelay: "0.8s" }}>
-        <div className="flex items-center mb-6">
-          <Gamepad className="w-6 h-6 text-accent mr-3" />
-          <h2 className="text-2xl font-bold text-white">Latest News</h2>
+      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 animate-fade-up" style={{ animationDelay: "0.8s" }}>
+        {/* Local News */}
+        <div className="glass-card rounded-xl p-6">
+          <div className="flex items-center mb-6">
+            <Gamepad className="w-6 h-6 text-accent mr-3" />
+            <h2 className="text-2xl font-bold text-white">Local Esports News</h2>
+          </div>
+          <div className="grid gap-4">
+            {localNews.map((item) => (
+              <div key={item.title} className="p-4 hover-scale bg-black/40 rounded-lg">
+                <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
+                <time className="text-sm text-gray-400">{item.date}</time>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-4">
-          {news.map((item) => (
-            <div key={item.title} className="p-4 hover-scale bg-black/40 rounded-lg">
-              <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
-              <time className="text-sm text-gray-400">{item.date}</time>
-            </div>
-          ))}
+
+        {/* Global News */}
+        <div className="glass-card rounded-xl p-6">
+          <div className="flex items-center mb-6">
+            <Users className="w-6 h-6 text-accent mr-3" />
+            <h2 className="text-2xl font-bold text-white">Global Esports News</h2>
+          </div>
+          <div className="grid gap-4">
+            {globalNews.map((item) => (
+              <div key={item.title} className="p-4 hover-scale bg-black/40 rounded-lg">
+                <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
+                <time className="text-sm text-gray-400">{item.date}</time>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
