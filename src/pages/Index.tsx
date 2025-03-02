@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import UniversityRankings from "@/components/UniversityRankings";
 import GameTopPlayers from "@/components/GameTopPlayers";
 import NewsFeed from "@/components/NewsFeed";
 import AdminLink from "@/components/AdminLink";
+import LeagueTable from "@/components/LeagueTable";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -13,7 +13,8 @@ const Index = () => {
   const [filteredData, setFilteredData] = useState({
     universities: [],
     players: {},
-    news: []
+    news: [],
+    universityPoints: []
   });
 
   const universities = [
@@ -51,16 +52,31 @@ const Index = () => {
     ],
   };
 
-  // Simulated news fetch function (replace with actual API call)
+  const universityPoints = [
+    { name: "University of Nairobi", fifa: 235, pubg: 189, callOfDuty: 210, tekken: 245, eFootball: 190, totalPoints: 1069 },
+    { name: "Kenyatta University", fifa: 220, pubg: 210, callOfDuty: 195, tekken: 200, eFootball: 215, totalPoints: 1040 },
+    { name: "Jomo Kenyatta University of Agriculture and Technology", fifa: 190, pubg: 225, callOfDuty: 230, tekken: 180, eFootball: 200, totalPoints: 1025 },
+    { name: "Strathmore University", fifa: 240, pubg: 170, callOfDuty: 185, tekken: 215, eFootball: 205, totalPoints: 1015 },
+    { name: "Moi University", fifa: 210, pubg: 195, callOfDuty: 200, tekken: 190, eFootball: 180, totalPoints: 975 },
+    { name: "Maseno University", fifa: 200, pubg: 185, callOfDuty: 175, tekken: 205, eFootball: 195, totalPoints: 960 },
+    { name: "Technical University of Kenya", fifa: 180, pubg: 200, callOfDuty: 190, tekken: 175, eFootball: 210, totalPoints: 955 },
+    { name: "Dedan Kimathi University of Technology", fifa: 175, pubg: 180, callOfDuty: 220, tekken: 165, eFootball: 185, totalPoints: 925 },
+    { name: "Mount Kenya University", fifa: 195, pubg: 165, callOfDuty: 180, tekken: 195, eFootball: 175, totalPoints: 910 },
+    { name: "Multimedia University of Kenya", fifa: 185, pubg: 175, callOfDuty: 170, tekken: 185, eFootball: 170, totalPoints: 885 },
+    { name: "Egerton University", fifa: 165, pubg: 190, callOfDuty: 165, tekken: 170, eFootball: 180, totalPoints: 870 },
+    { name: "Kabarak University", fifa: 170, pubg: 160, callOfDuty: 175, tekken: 180, eFootball: 165, totalPoints: 850 },
+    { name: "Machakos University", fifa: 160, pubg: 170, callOfDuty: 160, tekken: 175, eFootball: 160, totalPoints: 825 },
+    { name: "University of Eldoret", fifa: 155, pubg: 165, callOfDuty: 150, tekken: 165, eFootball: 155, totalPoints: 790 },
+    { name: "Kisii University", fifa: 150, pubg: 155, callOfDuty: 155, tekken: 155, eFootball: 145, totalPoints: 760 },
+  ];
+
   const fetchNews = async () => {
-    // Simulated local news
     const localNewsData = [
       { title: "UoN Dominates Regional Tournament", date: "2024-03-10", type: "local" },
       { title: "New Esports Arena Opens at Strathmore", date: "2024-03-08", type: "local" },
       { title: "KU Team Qualifies for Continental Championship", date: "2024-03-05", type: "local" },
     ];
 
-    // Simulated global news
     const globalNewsData = [
       { title: "Major Updates Coming to PUBG Mobile", date: "2024-03-10", type: "global" },
       { title: "FIFA 24 Global Series Announced", date: "2024-03-09", type: "global" },
@@ -71,33 +87,29 @@ const Index = () => {
     setGlobalNews(globalNewsData);
   };
 
-  // Fetch news every 5 minutes
   useEffect(() => {
-    fetchNews(); // Initial fetch
-    const interval = setInterval(fetchNews, 300000); // Update every 5 minutes
+    fetchNews();
+    const interval = setInterval(fetchNews, 300000);
     return () => clearInterval(interval);
   }, []);
 
-  // Search functionality
   useEffect(() => {
     if (searchQuery.trim() === "") {
-      // Reset to original data when search is empty
       setFilteredData({
         universities: universities,
         players: gameTopPlayers,
-        news: [...localNews, ...globalNews]
+        news: [...localNews, ...globalNews],
+        universityPoints: universityPoints
       });
       return;
     }
 
     const query = searchQuery.toLowerCase().trim();
     
-    // Filter universities
     const filteredUniversities = universities.filter(uni => 
       uni.name.toLowerCase().includes(query)
     );
     
-    // Filter players in each game
     const filteredPlayers = {};
     Object.keys(gameTopPlayers).forEach(game => {
       filteredPlayers[game] = gameTopPlayers[game].filter(player => 
@@ -106,41 +118,41 @@ const Index = () => {
       );
     });
     
-    // Filter news
     const filteredNews = [...localNews, ...globalNews].filter(newsItem => 
       newsItem.title.toLowerCase().includes(query) || 
       newsItem.type.toLowerCase().includes(query)
     );
     
+    const filteredUniversityPoints = universityPoints.filter(uni => 
+      uni.name.toLowerCase().includes(query)
+    );
+    
     setFilteredData({
       universities: filteredUniversities,
       players: filteredPlayers,
-      news: filteredNews
+      news: filteredNews,
+      universityPoints: filteredUniversityPoints
     });
-  }, [searchQuery, universities, gameTopPlayers, localNews, globalNews]);
+  }, [searchQuery, universities, gameTopPlayers, localNews, globalNews, universityPoints]);
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
-      {/* Admin Login Button */}
       <AdminLink />
 
-      {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50 -z-10" />
 
-      {/* Hero Section with Search */}
       <HeroSection searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
-      {/* University Rankings */}
       <UniversityRankings universities={searchQuery.trim() ? filteredData.universities : universities} />
 
-      {/* Games Top Players */}
       <GameTopPlayers gameTopPlayers={searchQuery.trim() ? filteredData.players : gameTopPlayers} />
 
-      {/* News Feed */}
       <NewsFeed 
         localNews={searchQuery.trim() ? filteredData.news.filter(n => n.type === 'local') : localNews} 
         globalNews={searchQuery.trim() ? filteredData.news.filter(n => n.type === 'global') : globalNews} 
       />
+
+      <LeagueTable universities={searchQuery.trim() ? filteredData.universityPoints : universityPoints} />
     </div>
   );
 };
