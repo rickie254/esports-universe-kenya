@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Search, GameController, Trophy, Cpu, Joystick } from "lucide-react";
+import { Search, Gamepad, Trophy, Cpu, Joystick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeroSectionProps {
@@ -31,7 +31,7 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
       {/* Gaming Themed Animated Elements */}
       <div className="relative">
         <div className="absolute -top-10 -left-10 w-20 h-20 flex items-center justify-center animate-pulse">
-          <GameController className="w-12 h-12 text-[#8B5CF6] opacity-60" />
+          <Gamepad className="w-12 h-12 text-[#8B5CF6] opacity-60" />
         </div>
         <div className="absolute top-0 -right-4 w-16 h-16 flex items-center justify-center animate-bounce" style={{ animationDuration: "3s" }}>
           <Trophy className="w-10 h-10 text-[#F97316] opacity-60" />
