@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { Trophy, Users, Gamepad, Search, Award, ArrowUp, ArrowDown } from "lucide-react";
+import { Trophy, Users, Gamepad, Search, Award, ArrowUp, ArrowDown, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -71,23 +73,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Admin Login Button */}
+      <div className="fixed top-4 right-4 z-10 animate-fade-in">
+        <Link to="/admin-login">
+          <Button variant="outline" className="glass-card flex items-center gap-2 hover:bg-accent/20">
+            <LogIn className="w-4 h-4" />
+            <span>Admin</span>
+          </Button>
+        </Link>
+      </div>
+
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50 -z-10" />
 
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto mb-16 animate-fade-up">
         <div className="text-center text-white mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-up">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-in">
             Kenyan University Esports Rankings
           </h1>
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto animate-fade-in">
+          <p className="text-xl text-gray-200 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
             Tracking competitive gaming excellence across Kenyan universities
           </p>
         </div>
 
         {/* Search Bar */}
         <div className="max-w-xl mx-auto mb-12">
-          <div className="glass-card flex items-center p-2 rounded-lg animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="glass-card flex items-center p-2 rounded-lg animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <Search className="w-5 h-5 text-gray-400 mr-2" />
             <input
               type="text"
@@ -101,15 +113,19 @@ const Index = () => {
       </div>
 
       {/* Rankings Grid */}
-      <div className="max-w-7xl mx-auto grid gap-8 mb-16 animate-fade-up" style={{ animationDelay: "0.2s" }}>
+      <div className="max-w-7xl mx-auto grid gap-8 mb-16 animate-fade-up" style={{ animationDelay: "0.4s" }}>
         <div className="glass-card rounded-xl p-6">
           <div className="flex items-center mb-6">
             <Trophy className="w-6 h-6 text-accent mr-3" />
             <h2 className="text-2xl font-bold text-white">University Rankings</h2>
           </div>
           <div className="grid gap-4">
-            {universities.map((uni) => (
-              <div key={uni.name} className="flex items-center justify-between p-4 hover-scale bg-black/40 rounded-lg">
+            {universities.map((uni, index) => (
+              <div 
+                key={uni.name} 
+                className="flex items-center justify-between p-4 hover-scale bg-black/40 rounded-lg animate-fade-in" 
+                style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+              >
                 <div className="flex items-center">
                   <span className="text-lg font-semibold mr-4 text-white">#{uni.rank}</span>
                   <span className="text-lg text-white">{uni.name}</span>
@@ -143,7 +159,8 @@ const Index = () => {
               {players.map((player, playerIndex) => (
                 <div 
                   key={player.name} 
-                  className="p-4 hover-scale bg-black/40 rounded-lg"
+                  className="p-4 hover-scale bg-black/40 rounded-lg animate-fade-in"
+                  style={{ animationDelay: `${0.1 * (playerIndex + 1)}s` }}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold text-white">#{playerIndex + 1} {player.name}</span>
@@ -168,8 +185,12 @@ const Index = () => {
             <h2 className="text-2xl font-bold text-white">Local Esports News</h2>
           </div>
           <div className="grid gap-4">
-            {localNews.map((item) => (
-              <div key={item.title} className="p-4 hover-scale bg-black/40 rounded-lg">
+            {localNews.map((item, index) => (
+              <div 
+                key={item.title} 
+                className="p-4 hover-scale bg-black/40 rounded-lg animate-fade-in"
+                style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+              >
                 <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
                 <time className="text-sm text-gray-400">{item.date}</time>
               </div>
@@ -184,8 +205,12 @@ const Index = () => {
             <h2 className="text-2xl font-bold text-white">Global Esports News</h2>
           </div>
           <div className="grid gap-4">
-            {globalNews.map((item) => (
-              <div key={item.title} className="p-4 hover-scale bg-black/40 rounded-lg">
+            {globalNews.map((item, index) => (
+              <div 
+                key={item.title} 
+                className="p-4 hover-scale bg-black/40 rounded-lg animate-fade-in"
+                style={{ animationDelay: `${0.1 * (index + 1)}s` }}
+              >
                 <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
                 <time className="text-sm text-gray-400">{item.date}</time>
               </div>
