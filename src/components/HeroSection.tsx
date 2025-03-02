@@ -19,6 +19,14 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
         </p>
       </div>
 
+      {/* Colorful Animated Elements */}
+      <div className="relative">
+        <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-blue-500/30 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-16 h-16 rounded-full bg-purple-500/30 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-24 h-24 rounded-full bg-pink-500/30 animate-blob animation-delay-4000"></div>
+        <div className="absolute bottom-4 right-10 w-16 h-16 rounded-full bg-yellow-500/30 animate-blob animation-delay-6000"></div>
+      </div>
+
       {/* Search Bar */}
       <div className="max-w-xl mx-auto mb-12">
         <div className="glass-card flex items-center p-2 rounded-lg animate-fade-in" style={{ animationDelay: "0.3s" }}>
