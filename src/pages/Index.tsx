@@ -10,6 +10,11 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [globalNews, setGlobalNews] = useState([]);
   const [localNews, setLocalNews] = useState([]);
+  const [filteredData, setFilteredData] = useState({
+    universities: [],
+    players: {},
+    news: []
+  });
 
   const universities = [
     { name: "University of Nairobi", rank: 1, change: "up", points: 2500 },
@@ -73,6 +78,47 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Search functionality
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      // Reset to original data when search is empty
+      setFilteredData({
+        universities: universities,
+        players: gameTopPlayers,
+        news: [...localNews, ...globalNews]
+      });
+      return;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    
+    // Filter universities
+    const filteredUniversities = universities.filter(uni => 
+      uni.name.toLowerCase().includes(query)
+    );
+    
+    // Filter players in each game
+    const filteredPlayers = {};
+    Object.keys(gameTopPlayers).forEach(game => {
+      filteredPlayers[game] = gameTopPlayers[game].filter(player => 
+        player.name.toLowerCase().includes(query) || 
+        player.university.toLowerCase().includes(query)
+      );
+    });
+    
+    // Filter news
+    const filteredNews = [...localNews, ...globalNews].filter(newsItem => 
+      newsItem.title.toLowerCase().includes(query) || 
+      newsItem.type.toLowerCase().includes(query)
+    );
+    
+    setFilteredData({
+      universities: filteredUniversities,
+      players: filteredPlayers,
+      news: filteredNews
+    });
+  }, [searchQuery, universities, gameTopPlayers, localNews, globalNews]);
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
       {/* Admin Login Button */}
@@ -85,13 +131,16 @@ const Index = () => {
       <HeroSection searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       {/* University Rankings */}
-      <UniversityRankings universities={universities} />
+      <UniversityRankings universities={searchQuery.trim() ? filteredData.universities : universities} />
 
       {/* Games Top Players */}
-      <GameTopPlayers gameTopPlayers={gameTopPlayers} />
+      <GameTopPlayers gameTopPlayers={searchQuery.trim() ? filteredData.players : gameTopPlayers} />
 
       {/* News Feed */}
-      <NewsFeed localNews={localNews} globalNews={globalNews} />
+      <NewsFeed 
+        localNews={searchQuery.trim() ? filteredData.news.filter(n => n.type === 'local') : localNews} 
+        globalNews={searchQuery.trim() ? filteredData.news.filter(n => n.type === 'global') : globalNews} 
+      />
     </div>
   );
 };
