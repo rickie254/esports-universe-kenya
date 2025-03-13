@@ -14,11 +14,26 @@ interface UniversityPoints {
 
 interface LeagueTableProps {
   universities: UniversityPoints[];
+  isAdmin?: boolean;
+  onUpdatePoints?: (university: string, game: string, points: number) => void;
+  onRemoveUniversity?: (university: string) => void;
 }
 
-const LeagueTable = ({ universities }: LeagueTableProps) => {
+const LeagueTable = ({ 
+  universities, 
+  isAdmin = false, 
+  onUpdatePoints, 
+  onRemoveUniversity 
+}: LeagueTableProps) => {
   // Sort universities by total points (descending)
   const sortedUniversities = [...universities].sort((a, b) => b.totalPoints - a.totalPoints);
+  
+  const handlePointsChange = (university: string, game: string, value: string) => {
+    if (onUpdatePoints) {
+      const points = parseInt(value) || 0;
+      onUpdatePoints(university, game, points);
+    }
+  };
   
   return (
     <section className="max-w-7xl mx-auto mt-16 mb-16 animate-fade-up">
@@ -54,6 +69,9 @@ const LeagueTable = ({ universities }: LeagueTableProps) => {
                   <span>Points</span>
                 </div>
               </TableHead>
+              {isAdmin && (
+                <TableHead className="text-white text-center">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -64,12 +82,69 @@ const LeagueTable = ({ universities }: LeagueTableProps) => {
               >
                 <TableCell className="text-center font-medium text-white">{index + 1}</TableCell>
                 <TableCell className="font-medium text-white">{university.name}</TableCell>
-                <TableCell className="text-center text-white">{university.fifa}</TableCell>
-                <TableCell className="text-center text-white">{university.pubg}</TableCell>
-                <TableCell className="text-center text-white">{university.callOfDuty}</TableCell>
-                <TableCell className="text-center text-white">{university.tekken}</TableCell>
-                <TableCell className="text-center text-white">{university.eFootball}</TableCell>
-                <TableCell className="text-center font-bold text-white">{university.totalPoints}</TableCell>
+                
+                {isAdmin ? (
+                  <>
+                    <TableCell className="text-center">
+                      <input 
+                        type="number" 
+                        value={university.fifa}
+                        onChange={(e) => handlePointsChange(university.name, "fifa", e.target.value)}
+                        className="w-16 bg-black/30 border border-white/20 text-white text-center rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <input 
+                        type="number" 
+                        value={university.pubg}
+                        onChange={(e) => handlePointsChange(university.name, "pubg", e.target.value)}
+                        className="w-16 bg-black/30 border border-white/20 text-white text-center rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <input 
+                        type="number" 
+                        value={university.callOfDuty}
+                        onChange={(e) => handlePointsChange(university.name, "callOfDuty", e.target.value)}
+                        className="w-16 bg-black/30 border border-white/20 text-white text-center rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <input 
+                        type="number" 
+                        value={university.tekken}
+                        onChange={(e) => handlePointsChange(university.name, "tekken", e.target.value)}
+                        className="w-16 bg-black/30 border border-white/20 text-white text-center rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <input 
+                        type="number" 
+                        value={university.eFootball}
+                        onChange={(e) => handlePointsChange(university.name, "eFootball", e.target.value)}
+                        className="w-16 bg-black/30 border border-white/20 text-white text-center rounded p-1"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center font-bold text-white">{university.totalPoints}</TableCell>
+                    <TableCell className="text-center">
+                      <button 
+                        onClick={() => onRemoveUniversity && onRemoveUniversity(university.name)}
+                        className="text-destructive hover:text-destructive/80 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell className="text-center text-white">{university.fifa}</TableCell>
+                    <TableCell className="text-center text-white">{university.pubg}</TableCell>
+                    <TableCell className="text-center text-white">{university.callOfDuty}</TableCell>
+                    <TableCell className="text-center text-white">{university.tekken}</TableCell>
+                    <TableCell className="text-center text-white">{university.eFootball}</TableCell>
+                    <TableCell className="text-center font-bold text-white">{university.totalPoints}</TableCell>
+                  </>
+                )}
               </TableRow>
             ))}
           </TableBody>
