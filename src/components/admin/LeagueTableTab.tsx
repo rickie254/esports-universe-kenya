@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,7 +59,12 @@ const LeagueTableTab = ({
       return uni;
     });
     
-    setLeagueUniversities(updatedLeagueUniversities);
+    // Sort universities by total points (highest to lowest)
+    const sortedUniversities = [...updatedLeagueUniversities].sort(
+      (a, b) => b.totalPoints - a.totalPoints
+    );
+    
+    setLeagueUniversities(sortedUniversities);
   };
 
   // Remove university from league table
@@ -95,13 +100,16 @@ const LeagueTableTab = ({
       newLeagueUniversity.tekken + 
       newLeagueUniversity.eFootball;
     
-    setLeagueUniversities([
-      ...leagueUniversities,
-      {
-        ...newLeagueUniversity,
-        totalPoints
-      }
-    ]);
+    const newUniversityWithTotal = {
+      ...newLeagueUniversity,
+      totalPoints
+    };
+    
+    // Add new university and sort by total points
+    const updatedUniversities = [...leagueUniversities, newUniversityWithTotal]
+      .sort((a, b) => b.totalPoints - a.totalPoints);
+    
+    setLeagueUniversities(updatedUniversities);
     
     // Reset form
     setNewLeagueUniversity({ 
@@ -118,6 +126,24 @@ const LeagueTableTab = ({
       description: `${newLeagueUniversity.name} has been added to the league table`,
     });
   };
+
+  // Ensure the universities list is sorted on component mount
+  useEffect(() => {
+    if (leagueUniversities.length > 0) {
+      const sortedUniversities = [...leagueUniversities].sort(
+        (a, b) => b.totalPoints - a.totalPoints
+      );
+      
+      // Only update if the order has changed
+      const orderChanged = sortedUniversities.some(
+        (uni, index) => uni.name !== leagueUniversities[index]?.name
+      );
+      
+      if (orderChanged) {
+        setLeagueUniversities(sortedUniversities);
+      }
+    }
+  }, []);
 
   return (
     <div className="glass-card rounded-xl p-6 mb-8">

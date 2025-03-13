@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +28,13 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
   
   const typeLabel = type === "local" ? "Local" : "Global";
 
+  // Sort news by date (most recent first)
+  const sortNewsByDate = (newsItems: NewsItem[]) => {
+    return [...newsItems].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  };
+
   // Add new news
   const handleAddNews = () => {
     if (!newNews.title) {
@@ -39,7 +46,7 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
       return;
     }
     
-    setNews([
+    const updatedNews = sortNewsByDate([
       {
         title: newNews.title,
         date: newNews.date,
@@ -47,6 +54,8 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
       },
       ...news,
     ]);
+    
+    setNews(updatedNews);
     
     setNewNews({ 
       title: "", 
@@ -71,6 +80,38 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
       description: "News item has been removed successfully",
     });
   };
+  
+  // Update news
+  const handleUpdateNews = (index: number, field: keyof NewsItem, value: string) => {
+    const updatedNews = [...news];
+    updatedNews[index] = {
+      ...updatedNews[index],
+      [field]: value
+    };
+    
+    // If date was changed, re-sort the list
+    if (field === 'date') {
+      setNews(sortNewsByDate(updatedNews));
+    } else {
+      setNews(updatedNews);
+    }
+  };
+  
+  // Ensure news is sorted on component mount
+  useEffect(() => {
+    if (news.length > 0) {
+      const sortedNews = sortNewsByDate(news);
+      
+      // Only update if ordering has changed
+      const orderChanged = sortedNews.some(
+        (item, index) => item.date !== news[index]?.date
+      );
+      
+      if (orderChanged) {
+        setNews(sortedNews);
+      }
+    }
+  }, []);
 
   return (
     <div className="glass-card rounded-xl p-6 mb-8">
@@ -114,21 +155,13 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
             <div>
               <Input 
                 value={newsItem.title}
-                onChange={(e) => {
-                  const updatedNews = [...news];
-                  updatedNews[index].title = e.target.value;
-                  setNews(updatedNews);
-                }}
+                onChange={(e) => handleUpdateNews(index, 'title', e.target.value)}
                 className="bg-black/30 border-white/20 text-white mb-2"
               />
               <Input 
                 type="date"
                 value={newsItem.date}
-                onChange={(e) => {
-                  const updatedNews = [...news];
-                  updatedNews[index].date = e.target.value;
-                  setNews(updatedNews);
-                }}
+                onChange={(e) => handleUpdateNews(index, 'date', e.target.value)}
                 className="w-40 bg-black/30 border-white/20 text-white"
               />
             </div>

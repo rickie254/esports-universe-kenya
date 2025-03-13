@@ -25,9 +25,7 @@ const LeagueTable = ({
   onUpdatePoints, 
   onRemoveUniversity 
 }: LeagueTableProps) => {
-  // Sort universities by total points (descending)
-  const sortedUniversities = [...universities].sort((a, b) => b.totalPoints - a.totalPoints);
-  
+  // No sorting here as data comes pre-sorted from the parent component
   const handlePointsChange = (university: string, game: string, value: string) => {
     if (onUpdatePoints) {
       const points = parseInt(value) || 0;
@@ -75,7 +73,7 @@ const LeagueTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedUniversities.map((university, index) => (
+            {universities.map((university, index) => (
               <TableRow 
                 key={university.name} 
                 className={index % 2 === 0 ? "bg-muted/20" : "bg-muted/10"}
