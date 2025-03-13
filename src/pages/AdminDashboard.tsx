@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import LeagueTable from "@/components/LeagueTable";
 
 // Admin protected route check
 const AdminDashboard = () => {
@@ -19,6 +19,45 @@ const AdminDashboard = () => {
     { name: "Strathmore University", rank: 2, change: "down", points: 2400 },
     { name: "Kenyatta University", rank: 3, change: "up", points: 2300 },
     { name: "JKUAT", rank: 4, change: "same", points: 2200 },
+  ]);
+  
+  const [leagueUniversities, setLeagueUniversities] = useState([
+    { 
+      name: "University of Nairobi", 
+      fifa: 30, 
+      pubg: 25, 
+      callOfDuty: 28, 
+      tekken: 22, 
+      eFootball: 20, 
+      totalPoints: 125 
+    },
+    { 
+      name: "Strathmore University", 
+      fifa: 28, 
+      pubg: 20, 
+      callOfDuty: 25, 
+      tekken: 18, 
+      eFootball: 24, 
+      totalPoints: 115 
+    },
+    { 
+      name: "Kenyatta University", 
+      fifa: 22, 
+      pubg: 26, 
+      callOfDuty: 20, 
+      tekken: 24, 
+      eFootball: 18, 
+      totalPoints: 110 
+    },
+    { 
+      name: "JKUAT", 
+      fifa: 24, 
+      pubg: 22, 
+      callOfDuty: 18, 
+      tekken: 20, 
+      eFootball: 21, 
+      totalPoints: 105 
+    },
   ]);
   
   const [gameTopPlayers, setGameTopPlayers] = useState({
@@ -63,6 +102,14 @@ const AdminDashboard = () => {
   
   // New items placeholders
   const [newUniversity, setNewUniversity] = useState({ name: "", points: 0 });
+  const [newLeagueUniversity, setNewLeagueUniversity] = useState({ 
+    name: "", 
+    fifa: 0, 
+    pubg: 0, 
+    callOfDuty: 0, 
+    tekken: 0, 
+    eFootball: 0
+  });
   const [newLocalNews, setNewLocalNews] = useState({ title: "", date: new Date().toISOString().split('T')[0] });
   const [newGlobalNews, setNewGlobalNews] = useState({ title: "", date: new Date().toISOString().split('T')[0] });
   const [selectedGame, setSelectedGame] = useState("tekken");
@@ -274,6 +321,83 @@ const AdminDashboard = () => {
     });
   };
   
+  // Update points in the league table
+  const handleUpdateLeaguePoints = (university: string, game: string, points: number) => {
+    const updatedLeagueUniversities = leagueUniversities.map(uni => {
+      if (uni.name === university) {
+        const updatedUni = { ...uni, [game]: points };
+        // Recalculate total points
+        updatedUni.totalPoints = 
+          updatedUni.fifa + 
+          updatedUni.pubg + 
+          updatedUni.callOfDuty + 
+          updatedUni.tekken + 
+          updatedUni.eFootball;
+        return updatedUni;
+      }
+      return uni;
+    });
+    
+    setLeagueUniversities(updatedLeagueUniversities);
+  };
+  
+  // Remove university from league table
+  const handleRemoveLeagueUniversity = (university: string) => {
+    const updatedLeagueUniversities = leagueUniversities.filter(
+      uni => uni.name !== university
+    );
+    
+    setLeagueUniversities(updatedLeagueUniversities);
+    
+    toast({
+      title: "University removed",
+      description: `${university} has been removed from the league table`,
+    });
+  };
+  
+  // Add new university to league table
+  const handleAddLeagueUniversity = () => {
+    if (!newLeagueUniversity.name) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "University name is required",
+      });
+      return;
+    }
+    
+    // Calculate total points
+    const totalPoints = 
+      newLeagueUniversity.fifa + 
+      newLeagueUniversity.pubg + 
+      newLeagueUniversity.callOfDuty + 
+      newLeagueUniversity.tekken + 
+      newLeagueUniversity.eFootball;
+    
+    setLeagueUniversities([
+      ...leagueUniversities,
+      {
+        ...newLeagueUniversity,
+        totalPoints
+      }
+    ]);
+    
+    // Reset form
+    setNewLeagueUniversity({ 
+      name: "", 
+      fifa: 0, 
+      pubg: 0, 
+      callOfDuty: 0, 
+      tekken: 0, 
+      eFootball: 0
+    });
+    
+    toast({
+      title: "University added",
+      description: `${newLeagueUniversity.name} has been added to the league table`,
+    });
+  };
+  
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
       {/* Background Overlay */}
@@ -310,8 +434,9 @@ const AdminDashboard = () => {
         <h1 className="text-3xl font-bold mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
         
         <Tabs defaultValue="universities" className="animate-fade-up">
-          <TabsList className="grid grid-cols-4 glass-card mb-8">
+          <TabsList className="grid grid-cols-5 glass-card mb-8">
             <TabsTrigger value="universities">Universities</TabsTrigger>
+            <TabsTrigger value="league-table">League Table</TabsTrigger>
             <TabsTrigger value="players">Players</TabsTrigger>
             <TabsTrigger value="local-news">Local News</TabsTrigger>
             <TabsTrigger value="global-news">Global News</TabsTrigger>
@@ -402,6 +527,101 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+            </div>
+          </TabsContent>
+          
+          {/* League Table Tab */}
+          <TabsContent value="league-table" className="animate-fade-in">
+            <div className="glass-card rounded-xl p-6 mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-white">Gaming League Table</h2>
+              
+              {/* Add new university to league table */}
+              <div className="mb-8 p-4 bg-black/30 rounded-lg">
+                <h3 className="text-xl font-bold mb-4 text-white">Add New University</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <Label htmlFor="leagueUniversityName" className="text-white mb-2 block">University Name</Label>
+                    <Input 
+                      id="leagueUniversityName"
+                      value={newLeagueUniversity.name}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, name: e.target.value })}
+                      placeholder="Enter university name"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                  <div>
+                    <Label htmlFor="fifaPoints" className="text-white mb-2 block">FIFA Points</Label>
+                    <Input 
+                      id="fifaPoints"
+                      type="number"
+                      value={newLeagueUniversity.fifa}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, fifa: parseInt(e.target.value) || 0 })}
+                      placeholder="Enter points"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="pubgPoints" className="text-white mb-2 block">PUBG Points</Label>
+                    <Input 
+                      id="pubgPoints"
+                      type="number"
+                      value={newLeagueUniversity.pubg}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, pubg: parseInt(e.target.value) || 0 })}
+                      placeholder="Enter points"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="codPoints" className="text-white mb-2 block">Call of Duty Points</Label>
+                    <Input 
+                      id="codPoints"
+                      type="number"
+                      value={newLeagueUniversity.callOfDuty}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, callOfDuty: parseInt(e.target.value) || 0 })}
+                      placeholder="Enter points"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="tekkenPoints" className="text-white mb-2 block">Tekken Points</Label>
+                    <Input 
+                      id="tekkenPoints"
+                      type="number"
+                      value={newLeagueUniversity.tekken}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, tekken: parseInt(e.target.value) || 0 })}
+                      placeholder="Enter points"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="eFootballPoints" className="text-white mb-2 block">eFootball Points</Label>
+                    <Input 
+                      id="eFootballPoints"
+                      type="number"
+                      value={newLeagueUniversity.eFootball}
+                      onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, eFootball: parseInt(e.target.value) || 0 })}
+                      placeholder="Enter points"
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                </div>
+                
+                <Button onClick={handleAddLeagueUniversity} className="bg-accent hover:bg-accent/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add University
+                </Button>
+              </div>
+              
+              {/* League table */}
+              <LeagueTable 
+                universities={leagueUniversities} 
+                isAdmin={true}
+                onUpdatePoints={handleUpdateLeaguePoints}
+                onRemoveUniversity={handleRemoveLeagueUniversity}
+              />
             </div>
           </TabsContent>
           
@@ -606,59 +826,4 @@ const AdminDashboard = () => {
                       id="globalNewsDate"
                       type="date"
                       value={newGlobalNews.date}
-                      onChange={(e) => setNewGlobalNews({ ...newGlobalNews, date: e.target.value })}
-                      className="bg-black/30 border-white/20 text-white"
-                    />
-                  </div>
-                </div>
-                <Button onClick={handleAddGlobalNews} className="bg-accent hover:bg-accent/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add News
-                </Button>
-              </div>
-              
-              {/* Global news list */}
-              <div className="space-y-4">
-                {globalNews.map((news, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-black/40 rounded-lg">
-                    <div>
-                      <Input 
-                        value={news.title}
-                        onChange={(e) => {
-                          const updatedGlobalNews = [...globalNews];
-                          updatedGlobalNews[index].title = e.target.value;
-                          setGlobalNews(updatedGlobalNews);
-                        }}
-                        className="bg-black/30 border-white/20 text-white mb-2"
-                      />
-                      <Input 
-                        type="date"
-                        value={news.date}
-                        onChange={(e) => {
-                          const updatedGlobalNews = [...globalNews];
-                          updatedGlobalNews[index].date = e.target.value;
-                          setGlobalNews(updatedGlobalNews);
-                        }}
-                        className="w-40 bg-black/30 border-white/20 text-white"
-                      />
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      className="hover:bg-destructive/20"
-                      onClick={() => handleRemoveNews(false, index)}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
-  );
-};
-
-export default AdminDashboard;
+                      onChange={(e) => setNewGlobalNews({ ...newGlobalNews, date: e.target.
