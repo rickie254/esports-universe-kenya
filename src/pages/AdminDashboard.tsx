@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -826,4 +827,59 @@ const AdminDashboard = () => {
                       id="globalNewsDate"
                       type="date"
                       value={newGlobalNews.date}
-                      onChange={(e) => setNewGlobalNews({ ...newGlobalNews, date: e.target.
+                      onChange={(e) => setNewGlobalNews({ ...newGlobalNews, date: e.target.value })}
+                      className="bg-black/30 border-white/20 text-white"
+                    />
+                  </div>
+                </div>
+                <Button onClick={handleAddGlobalNews} className="bg-accent hover:bg-accent/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add News
+                </Button>
+              </div>
+              
+              {/* Global news list */}
+              <div className="space-y-4">
+                {globalNews.map((news, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 bg-black/40 rounded-lg">
+                    <div>
+                      <Input 
+                        value={news.title}
+                        onChange={(e) => {
+                          const updatedGlobalNews = [...globalNews];
+                          updatedGlobalNews[index].title = e.target.value;
+                          setGlobalNews(updatedGlobalNews);
+                        }}
+                        className="bg-black/30 border-white/20 text-white mb-2"
+                      />
+                      <Input 
+                        type="date"
+                        value={news.date}
+                        onChange={(e) => {
+                          const updatedGlobalNews = [...globalNews];
+                          updatedGlobalNews[index].date = e.target.value;
+                          setGlobalNews(updatedGlobalNews);
+                        }}
+                        className="w-40 bg-black/30 border-white/20 text-white"
+                      />
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      className="hover:bg-destructive/20"
+                      onClick={() => handleRemoveNews(false, index)}
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
