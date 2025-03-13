@@ -10,6 +10,7 @@ import LeagueTable from "@/components/LeagueTable";
 interface LeagueTableTabProps {
   leagueUniversities: Array<{
     name: string;
+    logo?: string;
     fifa: number;
     pubg: number;
     callOfDuty: number;
@@ -19,6 +20,7 @@ interface LeagueTableTabProps {
   }>;
   setLeagueUniversities: React.Dispatch<React.SetStateAction<Array<{
     name: string;
+    logo?: string;
     fifa: number;
     pubg: number;
     callOfDuty: number;
@@ -35,6 +37,7 @@ const LeagueTableTab = ({
   const { toast } = useToast();
   const [newLeagueUniversity, setNewLeagueUniversity] = useState({ 
     name: "", 
+    logo: "",
     fifa: 0, 
     pubg: 0, 
     callOfDuty: 0, 
@@ -65,6 +68,23 @@ const LeagueTableTab = ({
     );
     
     setLeagueUniversities(sortedUniversities);
+  };
+
+  // Update university logo
+  const handleUpdateLogo = (university: string, logo: string) => {
+    const updatedLeagueUniversities = leagueUniversities.map(uni => {
+      if (uni.name === university) {
+        return { ...uni, logo };
+      }
+      return uni;
+    });
+    
+    setLeagueUniversities(updatedLeagueUniversities);
+    
+    toast({
+      title: "Logo updated",
+      description: `Logo for ${university} has been updated`,
+    });
   };
 
   // Remove university from league table
@@ -114,6 +134,7 @@ const LeagueTableTab = ({
     // Reset form
     setNewLeagueUniversity({ 
       name: "", 
+      logo: "",
       fifa: 0, 
       pubg: 0, 
       callOfDuty: 0, 
@@ -160,6 +181,16 @@ const LeagueTableTab = ({
               value={newLeagueUniversity.name}
               onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, name: e.target.value })}
               placeholder="Enter university name"
+              className="bg-black/30 border-white/20 text-white"
+            />
+          </div>
+          <div>
+            <Label htmlFor="universityLogo" className="text-white mb-2 block">University Logo URL</Label>
+            <Input 
+              id="universityLogo"
+              value={newLeagueUniversity.logo}
+              onChange={(e) => setNewLeagueUniversity({ ...newLeagueUniversity, logo: e.target.value })}
+              placeholder="Enter logo URL (optional)"
               className="bg-black/30 border-white/20 text-white"
             />
           </div>
@@ -235,6 +266,7 @@ const LeagueTableTab = ({
         isAdmin={true}
         onUpdatePoints={handleUpdateLeaguePoints}
         onRemoveUniversity={handleRemoveLeagueUniversity}
+        onUpdateLogo={handleUpdateLogo}
       />
     </div>
   );

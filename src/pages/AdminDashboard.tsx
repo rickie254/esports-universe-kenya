@@ -26,6 +26,7 @@ const AdminDashboard = () => {
   const [leagueUniversities, setLeagueUniversities] = useState([
     { 
       name: "University of Nairobi", 
+      logo: "https://www.uonbi.ac.ke/sites/default/files/UoN%20logo.png",
       fifa: 30, 
       pubg: 25, 
       callOfDuty: 28, 
@@ -35,6 +36,7 @@ const AdminDashboard = () => {
     },
     { 
       name: "Strathmore University", 
+      logo: "https://strathmore.edu/wp-content/uploads/2016/10/Strathmore-logo-1.png",
       fifa: 28, 
       pubg: 20, 
       callOfDuty: 25, 
@@ -44,6 +46,7 @@ const AdminDashboard = () => {
     },
     { 
       name: "Kenyatta University", 
+      logo: "https://www.ku.ac.ke/images/KU-Logo.png",
       fifa: 22, 
       pubg: 26, 
       callOfDuty: 20, 
@@ -53,6 +56,7 @@ const AdminDashboard = () => {
     },
     { 
       name: "JKUAT", 
+      logo: "https://www.jkuat.ac.ke/wp-content/uploads/2014/05/JKUAT-Logo-Sept-2018.png",
       fifa: 24, 
       pubg: 22, 
       callOfDuty: 18, 

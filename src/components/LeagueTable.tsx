@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 interface UniversityPoints {
   name: string;
+  logo?: string;
   fifa: number;
   pubg: number;
   callOfDuty: number;
@@ -17,19 +18,27 @@ interface LeagueTableProps {
   isAdmin?: boolean;
   onUpdatePoints?: (university: string, game: string, points: number) => void;
   onRemoveUniversity?: (university: string) => void;
+  onUpdateLogo?: (university: string, logo: string) => void;
 }
 
 const LeagueTable = ({ 
   universities, 
   isAdmin = false, 
   onUpdatePoints, 
-  onRemoveUniversity 
+  onRemoveUniversity,
+  onUpdateLogo
 }: LeagueTableProps) => {
   // No sorting here as data comes pre-sorted from the parent component
   const handlePointsChange = (university: string, game: string, value: string) => {
     if (onUpdatePoints) {
       const points = parseInt(value) || 0;
       onUpdatePoints(university, game, points);
+    }
+  };
+  
+  const handleLogoChange = (university: string, logo: string) => {
+    if (onUpdateLogo) {
+      onUpdateLogo(university, logo);
     }
   };
   
@@ -79,7 +88,22 @@ const LeagueTable = ({
                 className={index % 2 === 0 ? "bg-muted/20" : "bg-muted/10"}
               >
                 <TableCell className="text-center font-medium text-white">{index + 1}</TableCell>
-                <TableCell className="font-medium text-white">{university.name}</TableCell>
+                <TableCell className="font-medium text-white">
+                  <div className="flex items-center gap-3">
+                    {university.logo ? (
+                      <img 
+                        src={university.logo} 
+                        alt={`${university.name} logo`} 
+                        className="w-8 h-8 object-contain rounded-full bg-black/20"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center text-xs">
+                        {university.name.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    {university.name}
+                  </div>
+                </TableCell>
                 
                 {isAdmin ? (
                   <>
@@ -124,13 +148,20 @@ const LeagueTable = ({
                       />
                     </TableCell>
                     <TableCell className="text-center font-bold text-white">{university.totalPoints}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-center flex flex-col gap-2 items-center">
                       <button 
                         onClick={() => onRemoveUniversity && onRemoveUniversity(university.name)}
                         className="text-destructive hover:text-destructive/80 transition-colors"
                       >
                         Remove
                       </button>
+                      <input
+                        type="text"
+                        placeholder="Logo URL"
+                        value={university.logo || ""}
+                        onChange={(e) => handleLogoChange(university.name, e.target.value)}
+                        className="w-24 bg-black/30 border border-white/20 text-white text-xs rounded p-1"
+                      />
                     </TableCell>
                   </>
                 ) : (
