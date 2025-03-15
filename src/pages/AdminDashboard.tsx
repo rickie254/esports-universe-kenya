@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,11 +10,13 @@ import LeagueTableTab from "@/components/admin/LeagueTableTab";
 import PlayersTab from "@/components/admin/PlayersTab";
 import NewsTab from "@/components/admin/NewsTab";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Admin protected route check
 const AdminDashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   const [universities, setUniversities] = useState([
     { name: "University of Nairobi", rank: 1, change: "up", points: 2500 },
@@ -107,10 +108,8 @@ const AdminDashboard = () => {
     { title: "New Tekken Tournament Circuit Revealed", date: "2024-03-07", type: "global" },
   ]);
   
-  // Active tab state (synchronized with sidebar)
   const [activeTab, setActiveTab] = useState("universities");
   
-  // Check if admin is authenticated
   useEffect(() => {
     const isAdmin = localStorage.getItem("adminAuthenticated") === "true";
     if (!isAdmin) {
@@ -123,16 +122,12 @@ const AdminDashboard = () => {
     }
   }, [navigate, toast]);
   
-  // Save updates (in a real app, this would save to a database)
   const handleSaveChanges = () => {
-    // In a real application, this would make API calls to update the database
-    // For now, we'll just show a success message
     toast({
       title: "Changes saved",
       description: "Your changes have been saved successfully",
     });
     
-    // Simulate saving to localStorage
     localStorage.setItem("universities", JSON.stringify(universities));
     localStorage.setItem("gameTopPlayers", JSON.stringify(gameTopPlayers));
     localStorage.setItem("localNews", JSON.stringify(localNews));
@@ -140,34 +135,30 @@ const AdminDashboard = () => {
   };
   
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
+    <div className={`flex flex-col ${!isMobile && "md:flex-row"} min-h-screen`}>
       <AdminSidebar />
       
-      {/* Main Content */}
-      <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8 relative">
-        {/* Background Overlay */}
+      <div className="flex-1 py-4 sm:py-12 px-2 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-black/50 -z-10" />
         
-        {/* Header with navigation */}
-        <div className="max-w-7xl mx-auto mb-8 flex justify-between items-center animate-fade-in">
+        <div className="max-w-7xl mx-auto mb-4 sm:mb-8 flex justify-between items-center animate-fade-in flex-wrap gap-2">
           <Link to="/" className="text-white flex items-center gap-2 hover:text-accent transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span>Back to Site</span>
+            <span className="text-sm sm:text-base">Back to Site</span>
           </Link>
           
           <Button 
             variant="outline" 
-            className="glass-card hover:bg-accent/20"
+            className="glass-card hover:bg-accent/20 text-sm sm:text-base px-2 sm:px-4"
             onClick={handleSaveChanges}
           >
-            <Save className="w-4 h-4 mr-2" />
-            Save All Changes
+            <Save className="w-4 h-4 mr-1 sm:mr-2" />
+            Save Changes
           </Button>
         </div>
         
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-fade-up">
             <TabsList className="hidden">
@@ -178,7 +169,6 @@ const AdminDashboard = () => {
               <TabsTrigger value="global-news">Global News</TabsTrigger>
             </TabsList>
             
-            {/* Universities Tab */}
             <TabsContent value="universities" className="animate-fade-in">
               <UniversityRankingsTab 
                 universities={universities} 
@@ -186,7 +176,6 @@ const AdminDashboard = () => {
               />
             </TabsContent>
             
-            {/* League Table Tab */}
             <TabsContent value="league-table" className="animate-fade-in">
               <LeagueTableTab 
                 leagueUniversities={leagueUniversities} 
@@ -194,7 +183,6 @@ const AdminDashboard = () => {
               />
             </TabsContent>
             
-            {/* Players Tab */}
             <TabsContent value="players" className="animate-fade-in">
               <PlayersTab 
                 gameTopPlayers={gameTopPlayers} 
@@ -202,7 +190,6 @@ const AdminDashboard = () => {
               />
             </TabsContent>
             
-            {/* Local News Tab */}
             <TabsContent value="local-news" className="animate-fade-in">
               <NewsTab 
                 news={localNews} 
@@ -211,7 +198,6 @@ const AdminDashboard = () => {
               />
             </TabsContent>
             
-            {/* Global News Tab */}
             <TabsContent value="global-news" className="animate-fade-in">
               <NewsTab 
                 news={globalNews} 

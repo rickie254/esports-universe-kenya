@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -40,8 +42,10 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
 const AdminSidebar = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("universities");
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   
   // Handle logout
   const handleLogout = () => {
@@ -53,9 +57,18 @@ const AdminSidebar = () => {
     navigate("/");
   };
   
-  // Toggle sidebar collapse
+  // Toggle sidebar collapse (only for desktop)
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  // Handle item click for mobile view
+  const handleItemClick = (id: string) => {
+    setActiveTab(id);
+    // Close the sheet after selecting an item on mobile
+    if (isMobile) {
+      setIsSheetOpen(false);
+    }
   };
   
   const items = [
@@ -85,23 +98,23 @@ const AdminSidebar = () => {
       icon: <Newspaper className="w-5 h-5" />,
     },
   ];
-  
-  return (
-    <div className={cn(
-      "min-h-screen flex flex-col bg-black/40 backdrop-blur-lg transition-all duration-300 border-r border-white/10",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
+
+  // Sidebar content for both mobile and desktop
+  const SidebarContent = () => (
+    <>
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10">
-        {!isCollapsed && <h2 className="text-white font-bold text-lg">Admin Panel</h2>}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleSidebar}
-          className="text-white hover:bg-white/10"
-        >
-          {isCollapsed ? <Menu /> : <X />}
-        </Button>
+        {(!isCollapsed || isMobile) && <h2 className="text-white font-bold text-lg">Admin Panel</h2>}
+        {!isMobile && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleSidebar}
+            className="text-white hover:bg-white/10"
+          >
+            {isCollapsed ? <Menu /> : <X />}
+          </Button>
+        )}
       </div>
       
       {/* Navigation Items */}
@@ -110,9 +123,9 @@ const AdminSidebar = () => {
           <SidebarItem
             key={item.id}
             icon={item.icon}
-            label={isCollapsed ? "" : item.label}
+            label={(isCollapsed && !isMobile) ? "" : item.label}
             active={activeTab === item.id}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => handleItemClick(item.id)}
           />
         ))}
       </div>
@@ -123,14 +136,44 @@ const AdminSidebar = () => {
           variant="ghost" 
           className={cn(
             "flex items-center gap-3 w-full justify-start text-white/80 hover:text-white hover:bg-destructive/20",
-            isCollapsed && "justify-center"
+            (isCollapsed && !isMobile) && "justify-center"
           )}
           onClick={handleLogout}
         >
           <LogOut className="w-5 h-5" />
-          {!isCollapsed && <span>Logout</span>}
+          {(!isCollapsed || isMobile) && <span>Logout</span>}
         </Button>
       </div>
+    </>
+  );
+  
+  // Return different sidebar versions for mobile and desktop
+  if (isMobile) {
+    return (
+      <div className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-lg border-b border-white/10 p-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-white font-bold text-lg">Admin</h2>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Menu />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="bg-black/90 backdrop-blur-lg border-r border-white/10 p-0 w-64">
+              <SidebarContent />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className={cn(
+      "min-h-screen flex flex-col bg-black/40 backdrop-blur-lg transition-all duration-300 border-r border-white/10",
+      isCollapsed ? "w-16" : "w-64"
+    )}>
+      <SidebarContent />
     </div>
   );
 };
