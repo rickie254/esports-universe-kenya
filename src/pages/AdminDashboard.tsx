@@ -10,6 +10,7 @@ import UniversityRankingsTab from "@/components/admin/UniversityRankingsTab";
 import LeagueTableTab from "@/components/admin/LeagueTableTab";
 import PlayersTab from "@/components/admin/PlayersTab";
 import NewsTab from "@/components/admin/NewsTab";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 // Admin protected route check
 const AdminDashboard = () => {
@@ -106,6 +107,9 @@ const AdminDashboard = () => {
     { title: "New Tekken Tournament Circuit Revealed", date: "2024-03-07", type: "global" },
   ]);
   
+  // Active tab state (synchronized with sidebar)
+  const [activeTab, setActiveTab] = useState("universities");
+  
   // Check if admin is authenticated
   useEffect(() => {
     const isAdmin = localStorage.getItem("adminAuthenticated") === "true";
@@ -118,16 +122,6 @@ const AdminDashboard = () => {
       navigate("/admin-login");
     }
   }, [navigate, toast]);
-  
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("adminAuthenticated");
-    toast({
-      title: "Logged out",
-      description: "You have been logged out successfully",
-    });
-    navigate("/");
-  };
   
   // Save updates (in a real app, this would save to a database)
   const handleSaveChanges = () => {
@@ -146,18 +140,22 @@ const AdminDashboard = () => {
   };
   
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative">
-      {/* Background Overlay */}
-      <div className="absolute inset-0 bg-black/50 -z-10" />
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <AdminSidebar />
       
-      {/* Header with navigation */}
-      <div className="max-w-7xl mx-auto mb-8 flex justify-between items-center animate-fade-in">
-        <Link to="/" className="text-white flex items-center gap-2 hover:text-accent transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Site</span>
-        </Link>
+      {/* Main Content */}
+      <div className="flex-1 py-12 px-4 sm:px-6 lg:px-8 relative">
+        {/* Background Overlay */}
+        <div className="absolute inset-0 bg-black/50 -z-10" />
         
-        <div className="flex items-center gap-4">
+        {/* Header with navigation */}
+        <div className="max-w-7xl mx-auto mb-8 flex justify-between items-center animate-fade-in">
+          <Link to="/" className="text-white flex items-center gap-2 hover:text-accent transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Site</span>
+          </Link>
+          
           <Button 
             variant="outline" 
             className="glass-card hover:bg-accent/20"
@@ -166,71 +164,63 @@ const AdminDashboard = () => {
             <Save className="w-4 h-4 mr-2" />
             Save All Changes
           </Button>
-          
-          <Button 
-            variant="outline" 
-            className="glass-card hover:bg-destructive/20"
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
         </div>
-      </div>
-      
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
         
-        <Tabs defaultValue="universities" className="animate-fade-up">
-          <TabsList className="grid grid-cols-5 glass-card mb-8">
-            <TabsTrigger value="universities">Universities</TabsTrigger>
-            <TabsTrigger value="league-table">League Table</TabsTrigger>
-            <TabsTrigger value="players">Players</TabsTrigger>
-            <TabsTrigger value="local-news">Local News</TabsTrigger>
-            <TabsTrigger value="global-news">Global News</TabsTrigger>
-          </TabsList>
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
           
-          {/* Universities Tab */}
-          <TabsContent value="universities" className="animate-fade-in">
-            <UniversityRankingsTab 
-              universities={universities} 
-              setUniversities={setUniversities} 
-            />
-          </TabsContent>
-          
-          {/* League Table Tab */}
-          <TabsContent value="league-table" className="animate-fade-in">
-            <LeagueTableTab 
-              leagueUniversities={leagueUniversities} 
-              setLeagueUniversities={setLeagueUniversities} 
-            />
-          </TabsContent>
-          
-          {/* Players Tab */}
-          <TabsContent value="players" className="animate-fade-in">
-            <PlayersTab 
-              gameTopPlayers={gameTopPlayers} 
-              setGameTopPlayers={setGameTopPlayers} 
-            />
-          </TabsContent>
-          
-          {/* Local News Tab */}
-          <TabsContent value="local-news" className="animate-fade-in">
-            <NewsTab 
-              news={localNews} 
-              setNews={setLocalNews} 
-              type="local" 
-            />
-          </TabsContent>
-          
-          {/* Global News Tab */}
-          <TabsContent value="global-news" className="animate-fade-in">
-            <NewsTab 
-              news={globalNews} 
-              setNews={setGlobalNews} 
-              type="global" 
-            />
-          </TabsContent>
-        </Tabs>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-fade-up">
+            <TabsList className="hidden">
+              <TabsTrigger value="universities">Universities</TabsTrigger>
+              <TabsTrigger value="league-table">League Table</TabsTrigger>
+              <TabsTrigger value="players">Players</TabsTrigger>
+              <TabsTrigger value="local-news">Local News</TabsTrigger>
+              <TabsTrigger value="global-news">Global News</TabsTrigger>
+            </TabsList>
+            
+            {/* Universities Tab */}
+            <TabsContent value="universities" className="animate-fade-in">
+              <UniversityRankingsTab 
+                universities={universities} 
+                setUniversities={setUniversities} 
+              />
+            </TabsContent>
+            
+            {/* League Table Tab */}
+            <TabsContent value="league-table" className="animate-fade-in">
+              <LeagueTableTab 
+                leagueUniversities={leagueUniversities} 
+                setLeagueUniversities={setLeagueUniversities} 
+              />
+            </TabsContent>
+            
+            {/* Players Tab */}
+            <TabsContent value="players" className="animate-fade-in">
+              <PlayersTab 
+                gameTopPlayers={gameTopPlayers} 
+                setGameTopPlayers={setGameTopPlayers} 
+              />
+            </TabsContent>
+            
+            {/* Local News Tab */}
+            <TabsContent value="local-news" className="animate-fade-in">
+              <NewsTab 
+                news={localNews} 
+                setNews={setLocalNews} 
+                type="local" 
+              />
+            </TabsContent>
+            
+            {/* Global News Tab */}
+            <TabsContent value="global-news" className="animate-fade-in">
+              <NewsTab 
+                news={globalNews} 
+                setNews={setGlobalNews} 
+                type="global" 
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
