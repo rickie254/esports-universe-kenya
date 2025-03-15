@@ -108,9 +108,11 @@ const AdminSidebar = () => {
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         {(!isCollapsed || isMobile) && (
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-              <span className="font-bold text-sm text-white">EU</span>
-            </div>
+            <img 
+              src="https://res.cloudinary.com/djeyyn3yi/image/upload/v1741438880/KUER_transparent_antzcz.png" 
+              alt="KUER Logo" 
+              className="h-10 w-auto"
+            />
             <h2 className="text-white font-bold text-lg">Admin</h2>
           </div>
         )}
@@ -162,9 +164,11 @@ const AdminSidebar = () => {
       <div className="sticky top-0 z-50 w-full bg-black/90 backdrop-blur-lg border-b border-white/10 p-2">
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-              <span className="font-bold text-sm text-white">EU</span>
-            </div>
+            <img 
+              src="https://res.cloudinary.com/djeyyn3yi/image/upload/v1741438880/KUER_transparent_antzcz.png" 
+              alt="KUER Logo" 
+              className="h-8 w-auto"
+            />
             <h2 className="text-white font-bold text-lg">Admin Panel</h2>
           </div>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
