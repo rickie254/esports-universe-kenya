@@ -8,7 +8,8 @@ import {
   Newspaper, 
   LogOut, 
   Menu,
-  X
+  X,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -36,6 +37,7 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
   >
     <div className="w-5 h-5">{icon}</div>
     <span>{label}</span>
+    {active && <ChevronRight className="w-4 h-4 ml-auto" />}
   </button>
 );
 
@@ -104,7 +106,14 @@ const AdminSidebar = () => {
     <>
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/10">
-        {(!isCollapsed || isMobile) && <h2 className="text-white font-bold text-lg">Admin Panel</h2>}
+        {(!isCollapsed || isMobile) && (
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+              <span className="font-bold text-sm text-white">EU</span>
+            </div>
+            <h2 className="text-white font-bold text-lg">Admin</h2>
+          </div>
+        )}
         {!isMobile && (
           <Button 
             variant="ghost" 
@@ -118,7 +127,7 @@ const AdminSidebar = () => {
       </div>
       
       {/* Navigation Items */}
-      <div className="flex-1 py-4 px-2 flex flex-col gap-1">
+      <div className="flex-1 py-4 px-2 flex flex-col gap-1 overflow-y-auto">
         {items.map((item) => (
           <SidebarItem
             key={item.id}
@@ -150,16 +159,21 @@ const AdminSidebar = () => {
   // Return different sidebar versions for mobile and desktop
   if (isMobile) {
     return (
-      <div className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-lg border-b border-white/10 p-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-white font-bold text-lg">Admin</h2>
+      <div className="sticky top-0 z-50 w-full bg-black/90 backdrop-blur-lg border-b border-white/10 p-2">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
+              <span className="font-bold text-sm text-white">EU</span>
+            </div>
+            <h2 className="text-white font-bold text-lg">Admin Panel</h2>
+          </div>
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-black/90 backdrop-blur-lg border-r border-white/10 p-0 w-64">
+            <SheetContent side="left" className="bg-black/95 backdrop-blur-lg border-r border-white/10 p-0 w-64">
               <SidebarContent />
             </SheetContent>
           </Sheet>

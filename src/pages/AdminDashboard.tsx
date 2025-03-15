@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -135,13 +136,13 @@ const AdminDashboard = () => {
   };
   
   return (
-    <div className={`flex flex-col ${!isMobile && "md:flex-row"} min-h-screen`}>
+    <div className={`flex flex-col ${!isMobile && "md:flex-row"} min-h-screen bg-black/5`}>
       <AdminSidebar />
       
-      <div className="flex-1 py-4 sm:py-12 px-2 sm:px-6 lg:px-8 relative">
+      <div className="flex-1 py-4 sm:py-8 px-3 sm:px-6 lg:px-8 relative">
         <div className="absolute inset-0 bg-black/50 -z-10" />
         
-        <div className="max-w-7xl mx-auto mb-4 sm:mb-8 flex justify-between items-center animate-fade-in flex-wrap gap-2">
+        <div className="max-w-7xl mx-auto mb-4 sm:mb-6 flex justify-between items-center animate-fade-in flex-wrap gap-2">
           <Link to="/" className="text-white flex items-center gap-2 hover:text-accent transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm sm:text-base">Back to Site</span>
@@ -149,16 +150,20 @@ const AdminDashboard = () => {
           
           <Button 
             variant="outline" 
-            className="glass-card hover:bg-accent/20 text-sm sm:text-base px-2 sm:px-4"
+            className="glass-card hover:bg-accent/20 text-sm sm:text-base py-1 px-2 h-9 sm:h-10"
             onClick={handleSaveChanges}
           >
             <Save className="w-4 h-4 mr-1 sm:mr-2" />
-            Save Changes
+            Save
           </Button>
         </div>
         
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-white text-center animate-scale-in">Admin Dashboard</h1>
+        <div className="max-w-7xl mx-auto mt-4">
+          {isMobile ? null : (
+            <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-white text-center animate-scale-in">
+              Admin Dashboard
+            </h1>
+          )}
           
           <Tabs value={activeTab} onValueChange={setActiveTab} className="animate-fade-up">
             <TabsList className="hidden">
