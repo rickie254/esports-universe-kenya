@@ -32,7 +32,46 @@ const PlayersTab = ({
 }: PlayersTabProps) => {
   const { toast } = useToast();
   const [selectedGame, setSelectedGame] = useState("tekken");
-  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", university: "", rating: 2000 });
+  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", university: "", rating: 0 });
+
+  const getMetricLabel = (game: string) => {
+    switch (game) {
+      case "tekken":
+        return "Wins";
+      case "fifa":
+      case "efootball":
+        return "Goals";
+      case "pubg":
+      case "codm":
+        return "Kills";
+      default:
+        return "Points";
+    }
+  };
+
+  const getDefaultRating = (game: string) => {
+    switch (game) {
+      case "tekken":
+        return 0; // Wins
+      case "fifa":
+      case "efootball":
+        return 0; // Goals
+      case "pubg":
+      case "codm":
+        return 0; // Kills
+      default:
+        return 0;
+    }
+  };
+
+  // Reset new player rating when game changes
+  const handleGameChange = (game: string) => {
+    setSelectedGame(game);
+    setNewPlayer({
+      ...newPlayer,
+      rating: getDefaultRating(game)
+    });
+  };
 
   // Add new player
   const handleAddPlayer = () => {
@@ -51,12 +90,12 @@ const PlayersTab = ({
       {
         name: newPlayer.name,
         university: newPlayer.university,
-        rating: newPlayer.rating || 2000,
+        rating: newPlayer.rating || 0,
       },
     ];
     
     setGameTopPlayers(updatedGameTopPlayers);
-    setNewPlayer({ name: "", university: "", rating: 2000 });
+    setNewPlayer({ name: "", university: "", rating: getDefaultRating(selectedGame) });
     
     toast({
       title: "Player added",
@@ -88,7 +127,7 @@ const PlayersTab = ({
         <select
           id="gameSelect"
           value={selectedGame}
-          onChange={(e) => setSelectedGame(e.target.value)}
+          onChange={(e) => handleGameChange(e.target.value)}
           className="w-full bg-black/30 border border-white/20 text-white rounded p-2"
         >
           <option value="tekken">Tekken</option>
@@ -124,13 +163,13 @@ const PlayersTab = ({
             />
           </div>
           <div>
-            <Label htmlFor="playerRating" className="text-white mb-2 block">Rating</Label>
+            <Label htmlFor="playerRating" className="text-white mb-2 block">{getMetricLabel(selectedGame)}</Label>
             <Input 
               id="playerRating"
               type="number"
               value={newPlayer.rating}
               onChange={(e) => setNewPlayer({ ...newPlayer, rating: parseInt(e.target.value) || 0 })}
-              placeholder="Enter rating"
+              placeholder={`Enter ${getMetricLabel(selectedGame).toLowerCase()}`}
               className="bg-black/30 border-white/20 text-white"
             />
           </div>
@@ -161,7 +200,7 @@ const PlayersTab = ({
                   }}
                   className="w-24 bg-black/30 border-white/20 text-white text-right"
                 />
-                <span className="ml-2 text-white">MMR</span>
+                <span className="ml-2 text-white">{getMetricLabel(selectedGame)}</span>
               </div>
               <Button 
                 variant="outline" 
