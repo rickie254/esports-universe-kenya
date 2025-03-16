@@ -10,17 +10,18 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const AdminContent = () => {
   const isMobile = useIsMobile();
   const { 
+    activeTab,
     universities, 
     leagueUniversities, 
     gameTopPlayers, 
     localNews, 
     globalNews,
-    activeTab,
     setUniversities, 
     setLeagueUniversities, 
     setGameTopPlayers, 
     setLocalNews, 
     setGlobalNews,
+    setActiveTab
   } = useAdminDashboard();
 
   return (
@@ -31,7 +32,7 @@ const AdminContent = () => {
         </h1>
       )}
       
-      <Tabs value={activeTab} onValueChange={(value) => {}} className="animate-fade-up">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)} className="animate-fade-up">
         <TabsList className="hidden">
           <TabsTrigger value="universities">Universities</TabsTrigger>
           <TabsTrigger value="league-table">League Table</TabsTrigger>
