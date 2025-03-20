@@ -1,34 +1,15 @@
 
-import { useEffect } from "react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminContent from "@/components/admin/AdminContent";
 import { AdminDashboardProvider } from "@/contexts/AdminDashboardContext";
-import { useToast } from "@/components/ui/use-toast";
 
 const AdminDashboard = () => {
   // Check admin authentication
-  const { isAuthenticated } = useAdminAuth();
+  useAdminAuth();
   const isMobile = useIsMobile();
-  const { toast } = useToast();
-  
-  // Set admin name if it doesn't exist
-  useEffect(() => {
-    if (isAuthenticated) {
-      const adminName = localStorage.getItem("adminName");
-      if (!adminName) {
-        const defaultName = "Admin-" + Math.floor(Math.random() * 1000).toString();
-        localStorage.setItem("adminName", defaultName);
-        
-        toast({
-          title: "Welcome!",
-          description: `You've been assigned the name: ${defaultName}`,
-        });
-      }
-    }
-  }, [isAuthenticated, toast]);
   
   return (
     <AdminDashboardProvider>
