@@ -36,7 +36,7 @@
   }
 
   .glass-card {
-    @apply bg-black/80 backdrop-blur-md border border-white/10 shadow-lg;
+    @apply bg-black/80 backdrop-blur-md border border-white/10 shadow-lg transition-all duration-300;
   }
 
   .hover-scale {
@@ -51,9 +51,20 @@
   .animate-text-color {
     animation: text-color-change 8s infinite alternate;
   }
-  
-  h2, h3 {
+
+  /* Apply animated text color to all headlines */
+  h1, h2, h3 {
     @apply animate-text-color;
+  }
+  
+  /* Search bar animation */
+  .search-animation {
+    animation: search-pulse 2s infinite;
+  }
+  
+  /* Floating animation */
+  .floating {
+    animation: floating 3s ease-in-out infinite;
   }
 }
 
@@ -89,7 +100,7 @@
   }
 }
 
-/* Text color animation */
+/* Enhanced text color animation with more vibrant colors */
 @keyframes text-color-change {
   0% {
     color: #ffffff;
@@ -108,6 +119,32 @@
   }
   100% {
     color: #33C3F0;
+  }
+}
+
+/* Search bar animation */
+@keyframes search-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+/* Floating animation */
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
@@ -154,4 +191,12 @@
 
 .animation-delay-6000 {
   animation-delay: 6s;
+}
+
+.search-pulse {
+  animation: search-pulse 2s infinite;
+}
+
+.floating {
+  animation: floating 3s ease-in-out infinite;
 }

@@ -93,6 +93,16 @@ export default {
           "100%": {
             transform: "translate(0px, 0px) scale(1)"
           }
+        },
+        "float": {
+          "0%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+          "100%": { transform: "translateY(0px)" }
+        },
+        "pulse-shadow": {
+          "0%": { boxShadow: "0 0 0 0 rgba(139, 92, 246, 0.4)" },
+          "70%": { boxShadow: "0 0 0 10px rgba(139, 92, 246, 0)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(139, 92, 246, 0)" }
         }
       },
       animation: {
@@ -100,6 +110,8 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "scale-up": "scale-up 0.3s ease-out",
         "blob": "blob 7s infinite",
+        "float": "float 3s ease-in-out infinite",
+        "pulse-shadow": "pulse-shadow 2s infinite"
       },
     },
   },
