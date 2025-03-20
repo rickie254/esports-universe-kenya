@@ -18,7 +18,7 @@ const PlayersTab = ({
 }: PlayersTabProps) => {
   const { toast } = useToast();
   const [selectedGame, setSelectedGame] = useState("tekken");
-  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", university: "", rating: 0 });
+  const [newPlayer, setNewPlayer] = useState<Player>({ name: "", university: "", rating: getDefaultRating("tekken") });
 
   // Handle game change
   const handleGameChange = (game: string) => {
@@ -41,12 +41,18 @@ const PlayersTab = ({
     }
     
     const updatedGameTopPlayers = { ...gameTopPlayers };
+    
+    // Make sure the game key exists in the gameTopPlayers object
+    if (!updatedGameTopPlayers[selectedGame]) {
+      updatedGameTopPlayers[selectedGame] = [];
+    }
+    
     updatedGameTopPlayers[selectedGame] = [
       ...updatedGameTopPlayers[selectedGame],
       {
         name: newPlayer.name,
         university: newPlayer.university,
-        rating: newPlayer.rating || 0,
+        rating: newPlayer.rating || getDefaultRating(selectedGame),
       },
     ];
     
