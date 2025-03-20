@@ -20,7 +20,7 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
   return (
     <div className="max-w-7xl mx-auto mb-16 animate-fade-up">
       <div className="text-center text-white mb-8">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-in">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-in animate-text-color">
           Kenyan University Esports Rankings
         </h1>
         <p className="text-xl text-gray-200 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -62,7 +62,7 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
             <Button 
               type="submit" 
               size="sm" 
-              className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white ml-2"
+              className="bg-[#ea384c] hover:bg-[#d32e3f] text-white ml-2"
               aria-label="Submit search"
             >
               Search
