@@ -6,6 +6,7 @@ import { getDefaultRating } from "@/utils/game-metrics";
 import GameSelector from "./players/GameSelector";
 import AddPlayerForm from "./players/AddPlayerForm";
 import PlayersList from "./players/PlayersList";
+import { useAdminDashboard } from "@/contexts/AdminDashboardContext";
 
 interface PlayersTabProps {
   gameTopPlayers: GameTopPlayers;
@@ -17,6 +18,7 @@ const PlayersTab = ({
   setGameTopPlayers
 }: PlayersTabProps) => {
   const { toast } = useToast();
+  const { adminName } = useAdminDashboard();
   const [selectedGame, setSelectedGame] = useState("tekken");
   const [newPlayer, setNewPlayer] = useState<Player>({ name: "", university: "", rating: getDefaultRating("tekken") });
 
@@ -61,13 +63,13 @@ const PlayersTab = ({
     
     toast({
       title: "Player added",
-      description: `${newPlayer.name} has been added to ${selectedGame.toUpperCase()}`,
+      description: `${newPlayer.name} has been added to ${selectedGame.toUpperCase()} by ${adminName}`,
     });
   };
 
   return (
     <div className="glass-card rounded-xl p-6 mb-8">
-      <h2 className="text-2xl font-bold mb-6 text-white">Game Players</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white animate-pulse animate-text-color">Game Players</h2>
       
       <GameSelector 
         selectedGame={selectedGame} 

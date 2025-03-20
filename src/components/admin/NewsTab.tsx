@@ -3,13 +3,15 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useAdminDashboard } from "@/contexts/AdminDashboardContext";
 
 interface NewsItem {
   title: string;
   date: string;
   type: string;
+  adminName?: string;
 }
 
 interface NewsTabProps {
@@ -20,10 +22,12 @@ interface NewsTabProps {
 
 const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
   const { toast } = useToast();
+  const { adminName } = useAdminDashboard();
   const [newNews, setNewNews] = useState<NewsItem>({ 
     title: "", 
     date: new Date().toISOString().split('T')[0],
-    type: type
+    type: type,
+    adminName: adminName
   });
   
   const typeLabel = type === "local" ? "Local" : "Global";
@@ -34,6 +38,14 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
       new Date(b.date).getTime() - new Date(a.date).getTime()
     );
   };
+
+  // Update newNews when adminName changes
+  useEffect(() => {
+    setNewNews(prev => ({
+      ...prev,
+      adminName
+    }));
+  }, [adminName]);
 
   // Add new news
   const handleAddNews = () => {
@@ -51,6 +63,7 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
         title: newNews.title,
         date: newNews.date,
         type: type,
+        adminName: adminName // Add the admin name
       },
       ...news,
     ]);
@@ -60,7 +73,8 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
     setNewNews({ 
       title: "", 
       date: new Date().toISOString().split('T')[0],
-      type: type
+      type: type,
+      adminName: adminName
     });
     
     toast({
@@ -86,7 +100,8 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
     const updatedNews = [...news];
     updatedNews[index] = {
       ...updatedNews[index],
-      [field]: value
+      [field]: value,
+      adminName: field === 'title' ? adminName : updatedNews[index].adminName // Update admin name when title is edited
     };
     
     // If date was changed, re-sort the list
@@ -115,11 +130,11 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
 
   return (
     <div className="glass-card rounded-xl p-6 mb-8">
-      <h2 className="text-2xl font-bold mb-6 text-white">{typeLabel} Esports News</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white animate-pulse animate-text-color">{typeLabel} Esports News</h2>
       
       {/* Add new news */}
       <div className="mb-8 p-4 bg-black/30 rounded-lg">
-        <h3 className="text-xl font-bold mb-4 text-white">Add New {typeLabel} News</h3>
+        <h3 className="text-xl font-bold mb-4 text-white animate-text-color">Add New {typeLabel} News</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <Label htmlFor={`${type}NewsTitle`} className="text-white mb-2 block">News Title</Label>
@@ -152,29 +167,43 @@ const NewsTab = ({ news, setNews, type }: NewsTabProps) => {
       <div className="space-y-4">
         {news.map((newsItem, index) => (
           <div key={index} className="flex items-center justify-between p-4 bg-black/40 rounded-lg">
-            <div>
+            <div className="w-full">
               <Input 
                 value={newsItem.title}
                 onChange={(e) => handleUpdateNews(index, 'title', e.target.value)}
                 className="bg-black/30 border-white/20 text-white mb-2"
               />
-              <Input 
-                type="date"
-                value={newsItem.date}
-                onChange={(e) => handleUpdateNews(index, 'date', e.target.value)}
-                className="w-40 bg-black/30 border-white/20 text-white"
-              />
+              <div className="flex flex-wrap gap-3 items-center">
+                <Input 
+                  type="date"
+                  value={newsItem.date}
+                  onChange={(e) => handleUpdateNews(index, 'date', e.target.value)}
+                  className="w-40 bg-black/30 border-white/20 text-white"
+                />
+                {newsItem.adminName && (
+                  <div className="flex items-center text-white/80 text-sm">
+                    <User className="w-3 h-3 mr-1" />
+                    <span>Posted by: {newsItem.adminName}</span>
+                  </div>
+                )}
+              </div>
             </div>
             <Button 
               variant="outline" 
               size="icon"
-              className="hover:bg-destructive/20"
+              className="hover:bg-destructive/20 ml-4 shrink-0"
               onClick={() => handleRemoveNews(index)}
             >
               <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
           </div>
         ))}
+        
+        {news.length === 0 && (
+          <div className="p-4 bg-black/20 rounded-lg text-white/70 text-center">
+            No {typeLabel.toLowerCase()} news items yet. Add some using the form above.
+          </div>
+        )}
       </div>
     </div>
   );
