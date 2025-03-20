@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -17,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAdminDashboard } from "@/contexts/AdminDashboardContext";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -46,8 +46,10 @@ const AdminSidebar = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState("universities");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  
+  // Use the context for state management
+  const { activeTab, setActiveTab } = useAdminDashboard();
   
   // Handle logout
   const handleLogout = () => {
@@ -64,7 +66,7 @@ const AdminSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Handle item click for mobile view
+  // Handle item click for both mobile and desktop
   const handleItemClick = (id: string) => {
     setActiveTab(id);
     // Close the sheet after selecting an item on mobile
