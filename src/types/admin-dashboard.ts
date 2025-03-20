@@ -37,7 +37,6 @@ export interface NewsItem {
   title: string;
   date: string;
   type: string;
-  adminName?: string; // Add adminName field to track who posted
 }
 
 export interface AdminDashboardState {
@@ -47,5 +46,4 @@ export interface AdminDashboardState {
   localNews: NewsItem[];
   globalNews: NewsItem[];
   activeTab: string;
-  adminName?: string; // Add adminName to track current admin
 }

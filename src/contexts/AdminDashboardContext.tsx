@@ -9,7 +9,7 @@ import {
   AdminDashboardState 
 } from "@/types/admin-dashboard";
 import { initialAdminDashboardState } from "@/data/admin-dashboard-data";
-import { saveAdminDashboardChanges, loadAdminDashboardChanges } from "@/utils/admin-dashboard-utils";
+import { saveAdminDashboardChanges } from "@/utils/admin-dashboard-utils";
 
 // Re-export types for components that import directly from context
 export type { 
@@ -28,7 +28,6 @@ interface AdminDashboardContextType extends AdminDashboardState {
   setLocalNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
   setGlobalNews: React.Dispatch<React.SetStateAction<NewsItem[]>>;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
-  setAdminName: React.Dispatch<React.SetStateAction<string>>;
   
   // Actions
   handleSaveChanges: () => void;
@@ -37,31 +36,38 @@ interface AdminDashboardContextType extends AdminDashboardState {
 const AdminDashboardContext = createContext<AdminDashboardContextType | undefined>(undefined);
 
 export const AdminDashboardProvider = ({ children }: { children: ReactNode }) => {
-  // Try to load data from localStorage
-  const savedState = loadAdminDashboardChanges();
+  // Try to load data from localStorage first, fallback to initial state
+  const loadFromLocalStorage = () => {
+    try {
+      const storedUniversities = localStorage.getItem("universities");
+      const storedGameTopPlayers = localStorage.getItem("gameTopPlayers");
+      const storedLocalNews = localStorage.getItem("localNews");
+      const storedGlobalNews = localStorage.getItem("globalNews");
+      const storedActiveTab = localStorage.getItem("activeTab");
+      
+      return {
+        universities: storedUniversities ? JSON.parse(storedUniversities) : initialAdminDashboardState.universities,
+        leagueUniversities: initialAdminDashboardState.leagueUniversities,
+        gameTopPlayers: storedGameTopPlayers ? JSON.parse(storedGameTopPlayers) : initialAdminDashboardState.gameTopPlayers,
+        localNews: storedLocalNews ? JSON.parse(storedLocalNews) : initialAdminDashboardState.localNews,
+        globalNews: storedGlobalNews ? JSON.parse(storedGlobalNews) : initialAdminDashboardState.globalNews,
+        activeTab: storedActiveTab || initialAdminDashboardState.activeTab,
+      };
+    } catch (error) {
+      console.error("Error loading from localStorage:", error);
+      return initialAdminDashboardState;
+    }
+  };
   
-  // Extract individual state slices from initial state, falling back to initial values
-  const [universities, setUniversities] = useState<University[]>(
-    savedState.universities || initialAdminDashboardState.universities
-  );
-  const [leagueUniversities, setLeagueUniversities] = useState<LeagueUniversity[]>(
-    savedState.leagueUniversities || initialAdminDashboardState.leagueUniversities
-  );
-  const [gameTopPlayers, setGameTopPlayers] = useState<GameTopPlayers>(
-    savedState.gameTopPlayers || initialAdminDashboardState.gameTopPlayers
-  );
-  const [localNews, setLocalNews] = useState<NewsItem[]>(
-    savedState.localNews || initialAdminDashboardState.localNews
-  );
-  const [globalNews, setGlobalNews] = useState<NewsItem[]>(
-    savedState.globalNews || initialAdminDashboardState.globalNews
-  );
-  const [activeTab, setActiveTab] = useState(
-    savedState.activeTab || initialAdminDashboardState.activeTab
-  );
-  const [adminName, setAdminName] = useState(
-    savedState.adminName || localStorage.getItem('adminName') || 'Admin'
-  );
+  const savedState = loadFromLocalStorage();
+  
+  // Extract individual state slices from initial state
+  const [universities, setUniversities] = useState<University[]>(savedState.universities);
+  const [leagueUniversities, setLeagueUniversities] = useState<LeagueUniversity[]>(savedState.leagueUniversities);
+  const [gameTopPlayers, setGameTopPlayers] = useState<GameTopPlayers>(savedState.gameTopPlayers);
+  const [localNews, setLocalNews] = useState<NewsItem[]>(savedState.localNews);
+  const [globalNews, setGlobalNews] = useState<NewsItem[]>(savedState.globalNews);
+  const [activeTab, setActiveTab] = useState(savedState.activeTab);
   
   // Handle saving changes
   const handleSaveChanges = () => {
@@ -71,15 +77,16 @@ export const AdminDashboardProvider = ({ children }: { children: ReactNode }) =>
       gameTopPlayers,
       localNews,
       globalNews,
-      activeTab,
-      adminName
+      activeTab
     });
   };
   
-  // Auto-save on component unmount and on state changes
+  // Auto-save on component unmount
   useEffect(() => {
-    handleSaveChanges();
-  }, [universities, leagueUniversities, gameTopPlayers, localNews, globalNews, activeTab, adminName]);
+    return () => {
+      handleSaveChanges();
+    };
+  }, [universities, leagueUniversities, gameTopPlayers, localNews, globalNews, activeTab]);
   
   return (
     <AdminDashboardContext.Provider
@@ -90,14 +97,12 @@ export const AdminDashboardProvider = ({ children }: { children: ReactNode }) =>
         localNews,
         globalNews,
         activeTab,
-        adminName,
         setUniversities,
         setLeagueUniversities,
         setGameTopPlayers,
         setLocalNews,
         setGlobalNews,
         setActiveTab,
-        setAdminName,
         handleSaveChanges,
       }}
     >
