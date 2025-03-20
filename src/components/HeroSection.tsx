@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Search, Gamepad, Trophy, Cpu, Joystick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +10,6 @@ interface HeroSectionProps {
 
 const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isSearchHovered, setIsSearchHovered] = useState(false);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +20,7 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
   return (
     <div className="max-w-7xl mx-auto mb-16 animate-fade-up">
       <div className="text-center text-white mb-8">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-in animate-text-color">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-scale-in">
           Kenyan University Esports Rankings
         </h1>
         <p className="text-xl text-gray-200 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -45,16 +44,11 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
         </div>
       </div>
 
-      {/* Enhanced Search Bar with Animation */}
+      {/* Enhanced Search Bar */}
       <div className="max-w-xl mx-auto mb-12">
         <form onSubmit={handleSearch}>
-          <div 
-            className={`glass-card flex items-center p-2 rounded-lg animate-fade-in ${isSearchFocused ? 'ring-2 ring-[#8B5CF6]' : ''} ${isSearchHovered ? 'scale-105' : 'scale-100'} transition-all duration-300`} 
-            style={{ animationDelay: "0.3s" }}
-            onMouseEnter={() => setIsSearchHovered(true)}
-            onMouseLeave={() => setIsSearchHovered(false)}
-          >
-            <Search className={`w-5 h-5 text-gray-400 mr-2 ${isSearchHovered ? 'animate-pulse' : ''}`} />
+          <div className={`glass-card flex items-center p-2 rounded-lg animate-fade-in ${isSearchFocused ? 'ring-2 ring-[#8B5CF6]' : ''}`} style={{ animationDelay: "0.3s" }}>
+            <Search className="w-5 h-5 text-gray-400 mr-2" />
             <input
               type="text"
               placeholder="Search universities, players, or tournaments..."
@@ -68,7 +62,7 @@ const HeroSection = ({ searchQuery, setSearchQuery }: HeroSectionProps) => {
             <Button 
               type="submit" 
               size="sm" 
-              className="bg-[#ea384c] hover:bg-[#ea384c]/90 text-white ml-2 shadow-md hover:shadow-lg transition-all duration-300"
+              className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white ml-2"
               aria-label="Submit search"
             >
               Search

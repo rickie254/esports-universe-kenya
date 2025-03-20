@@ -22,28 +22,12 @@ const AdminContent = () => {
     setGlobalNews
   } = useAdminDashboard();
 
-  // Map tab IDs to human-readable titles
-  const tabTitles = {
-    "universities": "Universities Rankings",
-    "league-table": "League Table",
-    "players": "Top Players",
-    "local-news": "Local News",
-    "global-news": "Global News"
-  };
-
   return (
     <div className="max-w-7xl mx-auto mt-2 sm:mt-4">
       {isMobile ? null : (
         <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-white text-center animate-scale-in animate-text-color">
           Admin Dashboard
         </h1>
-      )}
-      
-      {/* Tab Title with Animation */}
-      {activeTab && (
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-white text-center animate-scale-in animate-text-color">
-          {tabTitles[activeTab as keyof typeof tabTitles]}
-        </h2>
       )}
       
       <div className="animate-fade-up">

@@ -66,7 +66,7 @@ const AdminLogin = () => {
       </Link>
 
       <div className="glass-card rounded-xl p-8 max-w-md w-full animate-scale-in">
-        <h1 className="text-3xl font-bold mb-6 text-white text-center animate-text-color">Admin Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-white text-center">Admin Login</h1>
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
